@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Flask App with Just Home page</title>
+  </head>
+  <body>
+    <h1>Welcome to My Flask App  Just Home page ...</h1>
+    <p>Create or join a room:</p>
+    <form method="POST" action="/create_room">
+      <input type="submit" value="Create Room">
+    </form>
+    <form method="POST" action="/join_room">
+      <label for="room_id">Room ID:</label>
+      <input type="text" id="room_id" name="room_id">
+      <input type="submit" value="Join Room">
+    </form>
+  </body>
+</html>

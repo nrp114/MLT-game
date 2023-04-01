@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Room {{ room_id }}</title>
+</head>
+<body>
+	<h1>Waiting for Players</h1>
+	<p>You are in room {{ room_id }}. Waiting for other players to join...</p>
+	<button id="start-button">Start Quiz</button>
+
+	<script>
+		// Listen for the start button to be clicked
+		document.getElementById("start-button").addEventListener("click", function() {
+			// Redirect to the quiz route when the button is clicked
+			window.location.href = "{{ url_for('quiz', room_id=room_id) }}";
+		});
+	</script>
+</body>
+</html>
