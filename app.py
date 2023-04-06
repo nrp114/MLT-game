@@ -1,8 +1,10 @@
 # Import required Flask modules
 from flask import Flask, render_template, request, redirect, url_for
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit, join_room, leave_room, Namespace
 from waitress import serve
 import psycopg2
+from classes.room import Room
+from classes.client import Client
 
 # Create Flask application instance
 app = Flask(__name__, template_folder='templates')
@@ -13,28 +15,45 @@ socketio = SocketIO(app)
 
 # Define database schema
 
-# Establish a connection to the database
-conn = psycopg2.connect(
-    host="mlt-game-public.cvkpaldfli6u.us-east-1.rds.amazonaws.com",
-    port=5432,
-    database="mlt-game-public",
-    user="postgress",
-    password="Password123",
-)
+# # Establish a connection to the database
+# conn = psycopg2.connect(
+#     host="database-1.cvkpaldfli6u.us-east-1.rds.amazonaws.com",
+#     port=5432,
+#     database="database_name123",
+#     user="postgres123",
+#     password="Password123",
+# )
+# conn.close()
 
-# Create a cursor object
-cur = conn.cursor()
+@socketio.on('connect')
+def handle_connect():
+    print('A new client connected')
 
-# Execute a SQL query
-cur.execute("SELECT * FROM your_table_name")
+@socketio.on('my_event')
+def handle_message(data):
+    recieved_data = data['data']
+    print('Received data:', recieved_data)
+    socketio.emit('server_response', {'data': recieved_data})
 
-# Fetch the results
-results = cur.fetchall()
 
-# Close the cursor and connection
-cur.close()
-conn.close()
+# @app.route('/create_room', methods=['POST'])
+# def create_room():
+#     room_id = len(rooms) + 1
+#     room = Room(room_id)
+#     rooms[room_id] = room
+#     emit('room_created', room_id)
+#     return ''
 
+# @app.route('/join_room', methods=['POST'])
+# def join_room():
+#     room_id = int(request.form['room_id'])
+#     if room_id in rooms:
+#         room = rooms[room_id]
+#         room.add_client(request.sid)
+#         emit('room_joined', room_id)
+#     else:
+#         emit('room_not_found', room_id)
+#     return ''
 
 # Define routes for creating and playing quizzes
 @app.route('/')

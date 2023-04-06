@@ -9,10 +9,33 @@
     <form method="POST" action="/create_room">
       <input type="submit" value="Create Room">
     </form>
-    <form method="POST" action="/join_room">
+      <div id ="server_response"></div>
       <label for="room_id">Room ID:</label>
       <input type="text" id="room_id" name="room_id">
-      <input type="submit" value="Join Room">
-    </form>
+      <button id="btn_create_room"> Send Data </button>
   </body>
+
+  <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
+<script>
+    var socket = io.connect('http://10.0.0.155:8000');
+    var serverResponseDiv = document.getElementById('server_response');
+    
+    socket.on('connect', function() {
+        console.log('Connected');
+    });
+    var myButton = document.getElementById('btn_create_room');
+      myButton.addEventListener('click', function() {
+        var roomIdInput = document.getElementById('room_id');
+        var roomId = roomIdInput.value;
+          var data = {'data': roomId}
+          socket.emit('my_event', data);
+      });
+
+      socket.on('server_response', function(data) {
+        serverResponseDiv.innerHTML += '<p>Server response: ' + data.data + '</p>';
+    });
+
+</script>
+
+
 </html>
