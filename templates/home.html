@@ -9,30 +9,45 @@
     <form method="POST" action="/create_room">
       <input type="submit" value="Create Room">
     </form>
-      <div id ="server_response"></div>
-      <label for="room_id">Room ID:</label>
-      <input type="text" id="room_id" name="room_id">
-      <button id="btn_create_room"> Send Data </button>
+    <div id ="server_response"></div>
+    <label for="room_id">Room ID:</label>
+    <input type="text" id="room_id" name="room_id">
+    <button id="btn_create_room"> Send Data CR </button>
+    <button id="btn_enter_room"> Send Data ER </button>
   </body>
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
 <script>
-    var socket = io.connect('http://10.0.0.155:8000');
+    var socket = io.connect('http://192.168.1.3:8000');
     var serverResponseDiv = document.getElementById('server_response');
     
     socket.on('connect', function() {
         console.log('Connected');
     });
-    var myButton = document.getElementById('btn_create_room');
-      myButton.addEventListener('click', function() {
-        var roomIdInput = document.getElementById('room_id');
-        var roomId = roomIdInput.value;
-          var data = {'data': roomId}
-          socket.emit('my_event', data);
+    var createButton = document.getElementById('btn_create_room');
+      createButton.addEventListener('click', function() {
+          const socketId = socket.id;
+          console.log(socketId);
+          const data = {'socketId': socketId};
+          socket.emit('create_room', data);
       });
 
-      socket.on('server_response', function(data) {
-        serverResponseDiv.innerHTML += '<p>Server response: ' + data.data + '</p>';
+      socket.on('server_response_cr', function(data) {
+        serverResponseDiv.innerHTML += '<p>Server response: ' + JSON.stringify(data) + '</p>';
+    });
+
+    var enterButton = document.getElementById('btn_enter_room');
+      enterButton.addEventListener('click', function() {
+        var roomIdInput = document.getElementById('room_id');
+        var socketId = socket.id;
+        console.log(socketId);
+        var roomId = roomIdInput.value;
+          var data = {'roomId': roomId, 'socketId': socketId}
+          socket.emit('enter_room', data);
+      });
+
+      socket.on('server_response_er', function(data) {
+        serverResponseDiv.innerHTML += '<p>Server response: ' + JSON.stringify(data) + '</p>';
     });
 
 </script>
